@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perguntas de Entrevista - Guia RH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card-flip {
+            perspective: 1000px;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+        }
+        .card-front {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+        }
+        .nav-btn {
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .random-btn {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 min-h-screen py-8">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-4">💼 GET THAT JOB</h1>
+            <p class="text-xl text-purple-200 mb-6">Clique no card para ver a resposta recomendada</p>
+            
+            <!-- Barra de Progresso -->
+            <div class="bg-white bg-opacity-20 rounded-full h-3 mb-4">
+                <div id="progressBar" class="progress-bar bg-gradient-to-r from-pink-400 to-purple-500 h-3 rounded-full" style="width: 2.33%"></div>
+            </div>
+            <p class="text-purple-200">Pergunta <span id="currentNumber">1</span> de <span id="totalQuestions">50</span></p>
+        </div>
+
+        <!-- Card Principal -->
+        <div class="flex justify-center mb-8">
+            <div class="card-flip h-96 w-full max-w-2xl cursor-pointer" onclick="flipCard()" id="mainCard">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="text-center">
+                            <div class="text-6xl mb-6" id="cardIcon">🗣️</div>
+                            <h3 class="text-white font-bold text-2xl mb-4" id="cardQuestion">Tell me about yourself</h3>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <div class="text-center text-white">
+                            <h4 class="font-bold mb-4 text-xl">💡 Answer:</h4>
+                            <p class="text-base leading-relaxed mb-4" id="cardAnswer">Keep your answer work-focused and brief. Talk about experiences and positions related to the job. Start from the past and work to the present. Avoid sounding rehearsed!</p>
+                            <div class="border-t border-white border-opacity-30 pt-3">
+                                <p class="text-xs text-blue-200 opacity-90" id="cardTip">💡 Dica extra: Prepare uma resposta de 2-3 minutos focada em experiências relevantes para a vaga.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controles de Navegação -->
+        <div class="flex justify-between items-center mb-8">
+            <button onclick="previousCard()" id="prevBtn" class="nav-btn bg-gradient-to-r from-slate-600 to-slate-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                ← Anterior
+            </button>
+            
+            <div class="flex gap-2">
+                <button onclick="resetCard()" class="nav-btn bg-gradient-to-r from-gray-600 to-gray-700 text-white px-4 py-3 rounded-lg font-semibold">
+                    🔄 Virar Card
+                </button>
+                <button onclick="randomCard()" class="random-btn nav-btn bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-lg font-semibold">
+                    🎲 Aleatório
+                </button>
+            </div>
+            
+            <button onclick="nextCard()" id="nextBtn" class="nav-btn bg-gradient-to-r from-slate-600 to-slate-700 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+                Próxima →
+            </button>
+        </div>
+
+        <!-- Indicadores de Perguntas -->
+        <div class="grid grid-cols-10 md:grid-cols-15 lg:grid-cols-20 gap-1 mb-8">
+            <div class="indicator bg-slate-500 h-3 rounded-full cursor-pointer" onclick="goToCard(0)" title="Pergunta 1"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(1)" title="Pergunta 2"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(2)" title="Pergunta 3"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(3)" title="Pergunta 4"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(4)" title="Pergunta 5"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(5)" title="Pergunta 6"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(6)" title="Pergunta 7"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(7)" title="Pergunta 8"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(8)" title="Pergunta 9"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(9)" title="Pergunta 10"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(10)" title="Pergunta 11"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(11)" title="Pergunta 12"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(12)" title="Pergunta 13"></div>
+            <div class="indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer" onclick="goToCard(13)" title="Pergunta 14"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(14)" title="Pergunta 15"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(15)" title="Pergunta 16"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(16)" title="Pergunta 17"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(17)" title="Pergunta 18"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(18)" title="Pergunta 19"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(19)" title="Pergunta 20"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(20)" title="Pergunta 21"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(21)" title="Pergunta 22"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(22)" title="Pergunta 23"></div>
+            <div class="indicator bg-blue-600 h-3 rounded-full cursor-pointer" onclick="goToCard(23)" title="Pergunta 24"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(24)" title="Pergunta 25 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(25)" title="Pergunta 26 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(26)" title="Pergunta 27 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(27)" title="Pergunta 28 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(28)" title="Pergunta 29 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(29)" title="Pergunta 30 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(30)" title="Pergunta 31 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(31)" title="Pergunta 32 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(32)" title="Pergunta 33 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(33)" title="Pergunta 34 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(34)" title="Pergunta 35 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(35)" title="Pergunta 36 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(36)" title="Pergunta 37 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(37)" title="Pergunta 38 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(38)" title="Pergunta 39 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(39)" title="Pergunta 40 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(40)" title="Pergunta 41 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(41)" title="Pergunta 42 - Novíssima!"></div>
+            <div class="indicator bg-gray-600 h-3 rounded-full cursor-pointer" onclick="goToCard(42)" title="Pergunta 43 - Novíssima!"></div>
+            <div class="indicator bg-blue-800 h-3 rounded-full cursor-pointer" onclick="goToCard(43)" title="Pergunta 44 - Final!"></div>
+            <div class="indicator bg-blue-800 h-3 rounded-full cursor-pointer" onclick="goToCard(44)" title="Pergunta 45 - Final!"></div>
+            <div class="indicator bg-blue-800 h-3 rounded-full cursor-pointer" onclick="goToCard(45)" title="Pergunta 46 - Final!"></div>
+            <div class="indicator bg-blue-800 h-3 rounded-full cursor-pointer" onclick="goToCard(46)" title="Pergunta 47 - Final!"></div>
+            <div class="indicator bg-blue-800 h-3 rounded-full cursor-pointer" onclick="goToCard(47)" title="Pergunta 48 - Final!"></div>
+            <div class="indicator bg-blue-800 h-3 rounded-full cursor-pointer" onclick="goToCard(48)" title="Pergunta 49 - Final!"></div>
+            <div class="indicator bg-blue-800 h-3 rounded-full cursor-pointer" onclick="goToCard(49)" title="Pergunta 50 - Final!"></div>
+        </div>
+
+        <div class="text-center">
+            <p class="text-gray-300 text-sm">💡 Use as setas, clique nos indicadores ou use o botão aleatório para navegar</p>
+            <p class="text-blue-300 text-sm mt-1">✨ Perguntas 15-24 (azul claro)</p>
+            <p class="text-gray-400 text-sm mt-1">🆕 Perguntas 25-43 (cinza)</p>
+            <p class="text-blue-400 text-sm mt-1">🔥 Perguntas 44-50 (azul escuro) - Finais!</p>
+        </div>
+    </div>
+
+    <script>
+        let currentCardIndex = 0;
+        let isFlipped = false;
+
+        const questions = [
+            {
+                icon: "🗣️",
+                question: "Tell me about yourself",
+                answer: "Keep your answer work-focused and brief. Talk about experiences and positions related to the job. Start from the past and work to the present. Avoid sounding rehearsed!",
+                tip: "💡 Dica extra: Prepare uma resposta de 2-3 minutos focada em experiências relevantes para a vaga."
+            },
+            {
+                icon: "🚪",
+                question: "Why did you leave your last job?",
+                answer: "Always be positive! Never speak badly of bosses or colleagues. Focus on positive reasons like growth opportunities or new challenges.",
+                tip: "💡 Dica extra: Mesmo que tenha saído por problemas, transforme em oportunidade de crescimento."
+            },
+            {
+                icon: "💼",
+                question: "What experience do you have in this field?",
+                answer: "Talk about specific experiences related to the position. If you don't have exact experience, get as close as possible with relevant examples.",
+                tip: "💡 Dica extra: Use números e resultados concretos sempre que possível para demonstrar impacto."
+            },
+            {
+                icon: "🏆",
+                question: "Do you consider yourself successful?",
+                answer: "Always say YES! Explain briefly: you set goals, achieved some, and are on track to achieve others.",
+                tip: "💡 Dica extra: Tenha exemplos específicos de metas que você estabeleceu e alcançou."
+            },
+            {
+                icon: "👥",
+                question: "What do co-workers say about you?",
+                answer: "Prepare quotes or paraphrases from colleagues. Have specific examples of positive feedback you've received at work.",
+                tip: "💡 Dica extra: Peça feedback por escrito de colegas antes da entrevista para ter citações reais."
+            },
+            {
+                icon: "🏢",
+                question: "What do you know about this organization?",
+                answer: "Do your homework! Research the company's history, future direction, current issues, and key leaders.",
+                tip: "💡 Dica extra: Visite o site, LinkedIn da empresa e notícias recentes. Mostre interesse genuíno."
+            },
+            {
+                icon: "📚",
+                question: "What have you done to improve your knowledge in the last year?",
+                answer: "Include work-related activities: courses, certifications, reading, workshops. Show that you invest in self-development.",
+                tip: "💡 Dica extra: Mencione cursos online, livros específicos da área ou certificações relevantes."
+            },
+            {
+                icon: "🎯",
+                question: "Are you applying for other jobs?",
+                answer: "Be honest, but don't elaborate. Keep the focus on this position and what you can offer this organization.",
+                tip: "💡 Dica extra: Seja honesto mas enfatize que esta é sua primeira escolha e por quê."
+            },
+            {
+                icon: "❤️",
+                question: "Why do you want to work for this organization?",
+                answer: "Base your answer on research about the company. Be sincere and relate it to your long-term career goals.",
+                tip: "💡 Dica extra: Conecte os valores da empresa com seus valores pessoais e objetivos de carreira."
+            },
+            {
+                icon: "🤝",
+                question: "Do you know anyone who works for us?",
+                answer: "Know the policies about relatives working for the company. Mention friends only if they have a good reputation in the organization.",
+                tip: "💡 Dica extra: Se conhecer alguém, pergunte antes se pode mencioná-los. Isso mostra profissionalismo."
+            },
+            {
+                icon: "💰",
+                question: "What kind of salary do you need?",
+                answer: "Don't answer first! Say: 'What's the range for this position?' If they insist, give a broad range based on job details.",
+                tip: "💡 Dica extra: Pesquise salários no Glassdoor ou sites similares antes da entrevista."
+            },
+            {
+                icon: "⚽",
+                question: "Are you a team player?",
+                answer: "Of course! Have examples ready of when you worked for the good of the team. Be factual, don't boast.",
+                tip: "💡 Dica extra: Tenha uma história específica de quando você ajudou a equipe a alcançar um objetivo."
+            },
+            {
+                icon: "⏰",
+                question: "How long would you expect to work for us if hired?",
+                answer: "Avoid specific numbers. Say something like: 'I'd like it to be for a long time' or 'As long as we both feel I'm doing a good job.'",
+                tip: "💡 Dica extra: Demonstre interesse em crescer na empresa e fazer carreira lá."
+            },
+            {
+                icon: "⚖️",
+                question: "Have you ever had to fire anyone? How did you feel about that?",
+                answer: "Treat it seriously. Don't show you enjoy firing, but show you'll do it when necessary to protect the organization. Firing ≠ layoff.",
+                tip: "💡 Dica extra: Se nunca demitiu, fale sobre como lidaria com a situação de forma respeitosa."
+            },
+            {
+                icon: "🎭",
+                question: "What is your philosophy towards work?",
+                answer: "Be brief and positive. Show you believe work should be done well. Example: 'I believe work should be done with excellence and each task contributes to organizational success.'",
+                tip: "💡 Dica extra: Conecte sua filosofia com resultados práticos que você já alcançou."
+            },
+            {
+                icon: "🏖️",
+                question: "If you had enough money to retire right now, would you?",
+                answer: "Answer yes if true, but explain that since you need to work, this is the type of work you prefer. Don't lie - be authentic about your motivations.",
+                tip: "💡 Dica extra: Mostre que trabalha por paixão e propósito, não apenas por necessidade financeira."
+            },
+            {
+                icon: "🚫",
+                question: "Have you ever been asked to leave a position?",
+                answer: "If no, say no. If yes, be honest, brief, and avoid speaking negatively about people or organizations involved. Focus on learning.",
+                tip: "💡 Dica extra: Se sim, foque no que aprendeu e como isso te tornou um profissional melhor."
+            },
+            {
+                icon: "💎",
+                question: "Explain how you would be an asset to this organization",
+                answer: "This is your opportunity! Highlight your best points related to the position. Think ahead about the relationship between your skills and company needs.",
+                tip: "💡 Dica extra: Prepare 3-4 pontos específicos que conectem suas habilidades às necessidades da empresa."
+            },
+            {
+                icon: "🌟",
+                question: "Why should we hire you?",
+                answer: "Point out how your strengths meet the organization's needs. Don't mention other candidates for comparisons - focus on you.",
+                tip: "💡 Dica extra: Use a fórmula: suas habilidades + experiência + paixão = valor para a empresa."
+            },
+            {
+                icon: "💡",
+                question: "Tell me about a suggestion you have made",
+                answer: "Prepare a good example. Use a suggestion that was accepted and considered successful. Ideally related to the type of work you're applying for.",
+                tip: "💡 Dica extra: Inclua o impacto da sua sugestão: economia de tempo, dinheiro ou melhoria de processo."
+            },
+            {
+                icon: "😤",
+                question: "What irritates you about co-workers?",
+                answer: "This is a trap! Think hard, but you can't find anything that irritates you. A brief statement that you get along well with people is great.",
+                tip: "💡 Dica extra: Se insistirem, mencione algo construtivo como 'falta de comunicação' e como você ajuda."
+            },
+            {
+                icon: "💪",
+                question: "What is your greatest strength?",
+                answer: "Several answers are good, just stay positive. Examples: ability to prioritize, problem-solving skills, working under pressure, project focus, professional expertise, leadership, positive attitude.",
+                tip: "💡 Dica extra: Escolha uma força relevante para a vaga e dê um exemplo específico de como a usou."
+            },
+            {
+                icon: "🌈",
+                question: "Tell me about your dream job",
+                answer: "Avoid a specific job. Stay generic: 'A job where I love what I do, like the people, can contribute, and can hardly wait to get to work.'",
+                tip: "💡 Dica extra: Descreva características que esta vaga possui para mostrar alinhamento."
+            },
+            {
+                icon: "🎪",
+                question: "Why do you think you would do well at this job?",
+                answer: "Provide several reasons including skills, experience, and interest. Be specific about how your qualifications align with position requirements.",
+                tip: "💡 Dica extra: Mencione aspectos específicos da descrição da vaga que combinam com seu perfil."
+            },
+            {
+                icon: "🔍",
+                question: "What are you looking for in a job?",
+                answer: "Stay generic and positive. Talk about a job where you can use your skills, grow professionally, and contribute to organizational success.",
+                tip: "💡 Dica extra: Alinhe sua resposta com o que a empresa oferece em termos de crescimento e cultura."
+            },
+            {
+                icon: "🚫",
+                question: "What kind of person would you refuse to work with?",
+                answer: "Don't be trivial. It would take disloyalty to the organization, violence, or law-breaking for you to object. Minor objections will label you as a complainer.",
+                tip: "💡 Dica extra: Foque em questões éticas sérias, não em diferenças de personalidade menores."
+            },
+            {
+                icon: "⚖️",
+                question: "What is more important to you: the money or the work?",
+                answer: "Money is always important, but work is most important. There's no better answer than this. Show passion for what you do.",
+                tip: "💡 Dica extra: Explique que quando você ama o trabalho, o sucesso financeiro vem naturalmente."
+            },
+            {
+                icon: "👨‍💼",
+                question: "What would your previous supervisor say your strongest point is?",
+                answer: "There are several good possibilities: Loyalty, Energy, Positive attitude, Leadership, Teamwork, Expertise, Initiative, Patience, Hard work, Creativity, Problem-solving.",
+                tip: "💡 Dica extra: Se possível, use uma citação real ou feedback que você recebeu em avaliações."
+            },
+            {
+                icon: "⚠️",
+                question: "Tell me about a problem you had with a supervisor",
+                answer: "This is a trap to see if you'll speak badly of your boss. If you fall for it, it could end the interview. Stay positive and develop a poor memory about supervisor problems.",
+                tip: "💡 Dica extra: Se insistirem, transforme em oportunidade de aprendizado sobre comunicação."
+            },
+            {
+                icon: "😞",
+                question: "What has disappointed you about a job?",
+                answer: "Don't be trivial or negative. Safe areas include: Not enough challenge, Was laid off in a reduction, Company didn't win a contract that would give you more responsibility.",
+                tip: "💡 Dica extra: Sempre termine explicando como isso te motivou a buscar novas oportunidades."
+            },
+            {
+                icon: "💪",
+                question: "Tell me about your ability to work under pressure",
+                answer: "You can say you thrive under certain types of pressure. Give an example related to the type of position you're applying for.",
+                tip: "💡 Dica extra: Descreva suas estratégias para manter a calma e produtividade sob pressão."
+            },
+            {
+                icon: "🎯",
+                question: "Do your skills match this job or another job more closely?",
+                answer: "Probably this one. Don't fuel suspicion that you might want another job more than this one.",
+                tip: "💡 Dica extra: Seja específico sobre quais habilidades se alinham perfeitamente com esta vaga."
+            },
+            {
+                icon: "🔥",
+                question: "What motivates you to do your best on the job?",
+                answer: "This is a personal trait only you can say, but good examples are: Challenge, Achievement, Recognition, Making a difference.",
+                tip: "💡 Dica extra: Conecte sua motivação com os objetivos e cultura da empresa que está entrevistando."
+            },
+            {
+                icon: "🌙",
+                question: "Are you willing to work overtime? Nights? Weekends?",
+                answer: "This depends on you. Be totally honest. Don't promise something you can't deliver, but show flexibility when possible.",
+                tip: "💡 Dica extra: Mostre flexibilidade mas estabeleça que isso seria ocasional, não rotina."
+            },
+            {
+                icon: "📊",
+                question: "How would you know you were successful on this job?",
+                answer: "Several ways are good measures: You set high standards for yourself and meet them. Your results are successful. Your boss tells you you're successful.",
+                tip: "💡 Dica extra: Mencione métricas específicas da área ou KPIs que você acompanharia."
+            },
+            {
+                icon: "🏠",
+                question: "Would you be willing to relocate if required?",
+                answer: "You should be clear about this with your family before the interview. Don't say yes just to get the job if the real answer is no. Be honest to avoid future problems.",
+                tip: "💡 Dica extra: Se não pode se mudar, pergunte sobre trabalho remoto ou outras alternativas."
+            },
+            {
+                icon: "🤝",
+                question: "Are you willing to put the interests of the organization ahead of your own?",
+                answer: "This is a straight question of loyalty and dedication. Don't worry about deep ethical and philosophical implications. Just say yes.",
+                tip: "💡 Dica extra: Explique que o sucesso da empresa e o seu próprio sucesso estão alinhados."
+            },
+            {
+                icon: "👑",
+                question: "Describe your management style",
+                answer: "Try to avoid labels. Situational style is safe, because it says you'll manage according to the situation, rather than one approach for all.",
+                tip: "💡 Dica extra: Dê exemplos de como você adapta seu estilo à pessoa e situação específica."
+            },
+            {
+                icon: "📚",
+                question: "What have you learned from mistakes on the job?",
+                answer: "Here you have to come up with something or you strain credibility. Make it a small, well-intentioned mistake with a positive lesson learned. Example: working too far ahead of colleagues on a project.",
+                tip: "💡 Dica extra: Escolha um erro que demonstre crescimento e maturidade profissional."
+            },
+            {
+                icon: "👁️",
+                question: "Do you have any blind spots?",
+                answer: "Trick question. If you know about blind spots, they are no longer blind spots. Don't reveal areas of personal concern. Let them discover your weaknesses themselves.",
+                tip: "💡 Dica extra: Redirecione para áreas que você está trabalhando para melhorar continuamente."
+            },
+            {
+                icon: "🔎",
+                question: "If you were hiring a person for this job, what would you look for?",
+                answer: "Be careful to mention traits that are needed and that you have. This is an opportunity to indirectly highlight your qualifications.",
+                tip: "💡 Dica extra: Liste qualidades que você possui e que são essenciais para o sucesso na função."
+            },
+            {
+                icon: "🎓",
+                question: "Do you think you are overqualified for this position?",
+                answer: "Regardless of your qualifications, state that you are very well qualified for the position. Never disqualify yourself.",
+                tip: "💡 Dica extra: Enfatize que suas qualificações permitirão contribuir desde o primeiro dia."
+            },
+            {
+                icon: "🚀",
+                question: "How do you propose to compensate for your lack of experience?",
+                answer: "First, if you have experience the interviewer doesn't know about, mention it. Then point out (if true) that you are a hard worker and learn quickly.",
+                tip: "💡 Dica extra: Destaque experiências transferíveis e sua capacidade de aprendizado rápido."
+            },
+            {
+                icon: "👔",
+                question: "What qualities do you look for in a boss?",
+                answer: "Be generic and positive. Safe qualities are knowledgeable, a sense of humor, fair, loyal to subordinates and holder of high standards. All bosses think they have these traits.",
+                tip: "💡 Dica extra: Mencione qualidades universais que todo bom líder deveria ter."
+            },
+            {
+                icon: "🤝",
+                question: "Tell me about a time when you helped resolve a dispute between others",
+                answer: "Pick a specific incident. Concentrate on your problem-solving technique and not the dispute you settled.",
+                tip: "💡 Dica extra: Foque no processo de mediação e nas habilidades de comunicação que você usou."
+            },
+            {
+                icon: "⚽",
+                question: "What position do you prefer on a team working on a project?",
+                answer: "Be honest. If you are comfortable in different roles, point that out.",
+                tip: "💡 Dica extra: Demonstre flexibilidade mas mencione onde você naturalmente se destaca mais."
+            },
+            {
+                icon: "💪",
+                question: "Describe your work ethic",
+                answer: "Emphasize benefits to the organization. Things like determination to get the job done and work hard but enjoy your work are good.",
+                tip: "💡 Dica extra: Dê exemplos concretos de quando sua ética de trabalho fez diferença nos resultados."
+            },
+            {
+                icon: "😞",
+                question: "What has been your biggest professional disappointment?",
+                answer: "Be sure that you refer to something that was beyond your control. Show acceptance and no negative feelings.",
+                tip: "💡 Dica extra: Termine explicando como essa experiência te fortaleceu e ensinou resiliência."
+            },
+            {
+                icon: "🎉",
+                question: "Tell me about the most fun you have had on the job",
+                answer: "Talk about having fun by accomplishing something for the organization.",
+                tip: "💡 Dica extra: Conecte diversão com produtividade e resultados positivos para a empresa."
+            },
+            {
+                icon: "❓",
+                question: "Do you have any questions for me?",
+                answer: "Always have some questions prepared. Questions where you will be an asset to the organization are good. 'How soon will I be able to be productive?' and 'What type of projects will I be able to assist on?' are examples.",
+                tip: "💡 Dica extra: Prepare 3-4 perguntas inteligentes sobre a empresa, equipe e oportunidades de crescimento."
+            }
+        ];
+
+        function updateCard() {
+            const question = questions[currentCardIndex];
+            
+            document.getElementById('cardIcon').textContent = question.icon;
+            document.getElementById('cardQuestion').textContent = question.question;
+            document.getElementById('cardAnswer').textContent = question.answer;
+            document.getElementById('cardTip').textContent = question.tip;
+            
+            // Atualizar contador
+            document.getElementById('currentNumber').textContent = currentCardIndex + 1;
+            
+            // Atualizar barra de progresso
+            const progress = ((currentCardIndex + 1) / 50) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Atualizar indicadores
+            document.querySelectorAll('.indicator').forEach((indicator, index) => {
+                if (index === currentCardIndex) {
+                    indicator.className = 'indicator bg-yellow-400 h-3 rounded-full cursor-pointer';
+                } else if (index >= 43) {
+                    indicator.className = 'indicator bg-orange-500 h-3 rounded-full cursor-pointer';
+                } else if (index >= 24) {
+                    indicator.className = 'indicator bg-blue-500 h-3 rounded-full cursor-pointer';
+                } else if (index >= 14) {
+                    indicator.className = 'indicator bg-green-500 h-3 rounded-full cursor-pointer';
+                } else {
+                    indicator.className = 'indicator bg-white bg-opacity-30 h-3 rounded-full cursor-pointer';
+                }
+            });
+            
+            // Atualizar botões
+            document.getElementById('prevBtn').disabled = currentCardIndex === 0;
+            document.getElementById('nextBtn').disabled = currentCardIndex === 49;
+            
+            // Reset flip
+            resetCard();
+        }
+
+        function flipCard() {
+            const card = document.getElementById('mainCard');
+            card.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        function resetCard() {
+            const card = document.getElementById('mainCard');
+            card.classList.remove('flipped');
+            isFlipped = false;
+        }
+
+        function nextCard() {
+            if (currentCardIndex < 49) {
+                currentCardIndex++;
+                updateCard();
+            }
+        }
+
+        function previousCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                updateCard();
+            }
+        }
+
+        function goToCard(index) {
+            currentCardIndex = index;
+            updateCard();
+        }
+
+        function randomCard() {
+            const randomIndex = Math.floor(Math.random() * 50);
+            currentCardIndex = randomIndex;
+            updateCard();
+            
+            // Efeito visual no botão
+            const btn = document.querySelector('.random-btn');
+            btn.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                btn.style.transform = 'rotate(0deg)';
+            }, 600);
+        }
+
+        // Navegação por teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === 'ArrowLeft') previousCard();
+            if (e.key === ' ') {
+                e.preventDefault();
+                flipCard();
+            }
+            if (e.key === 'r' || e.key === 'R') randomCard();
+        });
+
+        // Inicializar
+        updateCard();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c91833d50364c4',t:'MTc1NzQ0NjE2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
